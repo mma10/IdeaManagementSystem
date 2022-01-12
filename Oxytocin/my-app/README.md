@@ -1,7 +1,7 @@
 # Idea Management System
 Frontend system to manage ideas known as "highlight" clustered into groups called "buckets"<br />
 See the demo <a href="https://www.youtube.com/watch?v=KFYg21Jq1Uc"> Here</a>
-App link: <a href="https://idea-management-tool.netlify.app/">Project</a>
+App link: <a href="https://highlightsmanage.netlify.app/">Project</a>
 
 #### Architecture
     Built using ReactJS as its easier and faster to build and manage componenets. Drag implemented using 'react-beautiful-dnd'.
