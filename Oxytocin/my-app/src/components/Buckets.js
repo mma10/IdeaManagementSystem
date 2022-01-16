@@ -11,8 +11,9 @@ export default class Buckets extends Component {
     this.state = {
       inComingData: null,
       isModalOpen: false,
-      allBuckets: [],
-      selectedNotes: []
+      allBuckets: [],     
+      selectedNotes: [],
+      ctrlPressed: false,
     };
     
     this.bindFunctions();
@@ -24,7 +25,9 @@ export default class Buckets extends Component {
     this.deleteNoteFromBucket = this.deleteNoteFromBucket.bind(this);
     this.editNoteFromBucket = this.editNoteFromBucket.bind(this);
     this.findNoteFromId = this.findNoteFromId.bind(this);
-    this.handleOnDragEnd = this.handleOnDragEnd.bind(this);    
+    this.handleOnDragEnd = this.handleOnDragEnd.bind(this); 
+    this.addSelectedNotes = this.addSelectedNotes.bind(this);
+    this.createNewBucketForSelectedNotes = this.createNewBucketForSelectedNotes.bind(this);   
   }
 
   toggleModal() {
@@ -40,7 +43,70 @@ export default class Buckets extends Component {
       this.setState(JSON.parse(Cookies.get("idea_management")));
       this.setState({ incomingData: null });
     }       
+
+    window.addEventListener("keyup", (e) => {
+      if (
+        e.key === "Control" &&
+        !this.props.showGroupedData &&
+        !this.state.isModalOpen
+      ) {
+        const bucketId = prompt("Enter New Bucket Name");
+        if (bucketId && bucketId.length > 0) {
+          this.createNewBucketForSelectedNotes(bucketId);
+        }
+        this.setState({ ctrlPressed: false, selectedNotes: [] });
+      }
+    });
+    window.addEventListener("keydown", (e) => {
+      if (
+        e.key === "Control" &&
+        !this.props.showGroupedData &&
+        !this.state.isModalOpen
+      ) {
+        this.setState({ ctrlPressed: true });
+        if(this.state.ctrlPressed)
+          console.log("ctrl pressedDown");
+      }
+    });
+
   }
+
+  createNewBucketForSelectedNotes(bucketId) {
+    const allSelectedNotes = this.state.selectedNotes.map(
+      (eachSelectedNote) => {
+        return this.findNoteFromId(
+          eachSelectedNote.noteId,
+          eachSelectedNote.bucketId
+        );
+      }
+    );
+    this.state.selectedNotes.forEach((note) => {
+      this.deleteNoteFromBucket(note.bucketId, note.noteId);
+    });
+    allSelectedNotes.forEach((eachNote) => {
+      this.createNewBucket(bucketId, eachNote);
+    });
+  }
+
+  addSelectedNotes(bucketId, noteId) {
+    if (
+      !this.state.selectedNotes.find(
+        (eachSelectedNote) => eachSelectedNote.noteId === noteId
+      )
+    ) {
+      this.setState({
+        selectedNotes: [...this.state.selectedNotes, { bucketId, noteId }],
+      });
+    } else {
+      const newSelectedNotes = this.state.selectedNotes.filter(
+        (eachSelectedNote) => eachSelectedNote.noteId !== noteId
+      );
+      this.setState({
+        selectedNotes: newSelectedNotes,
+      });
+    }
+  }
+
 
   createNewBucket(bucketId, note) {
     if (
@@ -185,7 +251,8 @@ export default class Buckets extends Component {
                               allNotes={eachBucket.allNotes}
                               allBuckets={this.state}
                               deleteNoteFromBucket={this.deleteNoteFromBucket}
-                              editNoteFromBucket={this.editNoteFromBucket}                             
+                              editNoteFromBucket={this.editNoteFromBucket}        
+                              ctrlPressed={this.state.ctrlPressed}                     
                               selectedNotes={this.state.selectedNotes}
                             />
                             {provided.placeholder}

@@ -6,7 +6,7 @@ class Bucket extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeDrags: 0,
+      activeDrags: 0      
     };
   }
 
@@ -19,44 +19,18 @@ class Bucket extends Component {
       allBuckets,
       deleteNoteFromBucket,
       editNoteFromBucket,
+      ctrlPressed,
+      selectedNotes,
     } = this.props;
     if (!showGroupedData) {
       return (
-        <React.Fragment>
-          <h5 className = "text-center bucket-head mb-1">{id}</h5>
+        <React.Fragment>          
           <div className = "">
             {allNotes &&
               allNotes.map((eachNote) => {
+                console.log(eachNote,"eachnote")
                 return (                  
-                  <div className = "card-div" style = {{backgroundColor: eachNote.color}}>
-                            <Highlight
-                              showGroupedData={showGroupedData}
-                              bucketId={id}
-                              addSelectedNotes={addSelectedNotes}
-                              id={eachNote.id}
-                              mainContent={eachNote.body}
-                              userName={eachNote.name}
-                              color={eachNote.color}
-                              allBuckets={allBuckets}
-                              deleteNodeFromList={deleteNoteFromBucket}
-                              editNoteFromBucket={editNoteFromBucket}                             
-                              selectedNotes={this.props.selectedNotes}
-                            />                             
-                  </div>
-                );
-              })}
-            </div>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <div>
-          <h5 className = "text-center bucket-head mb-1">{id}</h5>
-          <div className = "">         
-              {allNotes &&
-                allNotes.map((eachNote) => {
-                  return (
-                    <div className = "card-div" style = {{backgroundColor: eachNote.color}}>
+                  <div className = "card-div">   
                       <Draggable
                         key={eachNote.id}
                         draggableId={eachNote.id}
@@ -80,6 +54,52 @@ class Bucket extends Component {
                               allBuckets={allBuckets}
                               deleteNodeFromList={deleteNoteFromBucket}
                               editNoteFromBucket={editNoteFromBucket}
+                              ctrlPressed={ctrlPressed}
+                              selectedNotes={selectedNotes}
+                            />
+                          </div>
+                        )}
+                      </Draggable>                          
+                  </div>
+                );
+              })}
+            </div>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <div>
+          <h5 className = "text-center bucket-head mb-1">{id}</h5>
+          <div className = "">         
+              {allNotes &&
+                allNotes.map((eachNote) => {
+                  return (
+                    <div className = "card-div">
+                      <Draggable
+                        key={eachNote.id}
+                        draggableId={eachNote.id}
+                        index={eachNote.id}
+                      >
+                        {(provided) => (
+                          <div
+                            key={eachNote.id}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                          >
+                            <Highlight
+                              showGroupedData={showGroupedData}
+                              bucketId={id}
+                              id={eachNote.id}
+                              addSelectedNotes={addSelectedNotes}
+                              mainContent={eachNote.body}
+                              userName={eachNote.name}
+                              color={eachNote.color}
+                              allBuckets={allBuckets}
+                              deleteNodeFromList={deleteNoteFromBucket}
+                              editNoteFromBucket={editNoteFromBucket}
+                              ctrlPressed={ctrlPressed}
+                              selectedNotes={selectedNotes}
                             />
                           </div>
                         )}
